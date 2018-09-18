@@ -1,0 +1,54 @@
+<!-- Place these in your app’s entry point -->
+<link rel="import" href="../bower_components/vaadin-material-theme/color.html">
+<link rel="import" href="../bower_components/vaadin-material-theme/typography.html">
+
+<!-- Include the main style modules in global scope (you app’s entry point) -->
+<custom-style>
+    <style include="material-color-light material-typography"></style>
+    <style include="material-light-color"></style>
+    <style>
+        html  {
+            --material-font-family: "Roboto", sans-serif
+        }
+
+        body  {
+            background-color: #009688;
+        }
+
+        .setupLabel  {
+            font-size: 5em;
+        }
+
+        .setupStepLabel  {
+            font-size: 3em;
+            margin-top: -20px;
+        }
+
+        .setupBox  {
+            box-shadow: 0px 0px 3px black;
+            margin-top: 50px;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: white;
+        }
+
+        .setupLine_1, .setupLine_2  {
+            width: calc(40vw - 40px);
+        }
+
+        .SetupSubmitBtn  {
+            margin-top: 20px;
+            width: calc(40vw - 40px);
+        }
+
+        .setupProgress  {
+            width: calc(40vw - 40px);
+        }
+
+        //PAGE2
+
+        .submitUser  {
+            border-radius: 100px;
+        }
+    </style>
+</custom-style>
