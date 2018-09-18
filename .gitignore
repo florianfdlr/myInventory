@@ -1,1 +1,9 @@
 target/
+.idea/dictionaries
+.idea/libraries
+.idea/markdown-navigator
+.idea/modules/**/*.iml
+.idea/markdown-navigator.xml
+.idea/tasks.xml
+.idea/uiDesigner.xml
+.idea/workspace.xml
