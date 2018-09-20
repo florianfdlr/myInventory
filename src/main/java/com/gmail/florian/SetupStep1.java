@@ -44,13 +44,13 @@ public class SetupStep1 extends VerticalLayout {
     }
 
     //Line 1
-    private TextField databaseURLTextfield = new TextField("Database URL");             public boolean field1;
-    private TextField databasePortTextfield = new TextField("Database Port");           public boolean field2;
-    private TextField databaseNameTextfield = new TextField("Database Name");           public boolean field3;
+    private TextField databaseURLTextfield = new TextField("Database URL");      /* --> */       public boolean field1;
+    private TextField databasePortTextfield = new TextField("Database Port");    /* --> */       public boolean field2;
+    private TextField databaseNameTextfield = new TextField("Database Name");    /* --> */       public boolean field3;
 
     //Line 2
-    private TextField databaseUserTextfield = new TextField("Database User");           public boolean field4;
-    private PasswordField databasePwdTextfield = new PasswordField("Password");         public boolean field5;
+    private TextField databaseUserTextfield = new TextField("Database User");    /* --> */       public boolean field4;
+    private PasswordField databasePwdTextfield = new PasswordField("Password");  /* --> */       public boolean field5;
 
     public String getDatabaseUrlText()  {
         return databaseURLTextfield.getValue();
