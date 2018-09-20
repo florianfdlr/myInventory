@@ -3,6 +3,7 @@ package com.gmail.florian;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
@@ -10,6 +11,8 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+
+import java.io.*;
 
 @Route("Step1")
 @PageTitle("Setup Step 1")
@@ -132,7 +135,11 @@ public class SetupStep1 extends VerticalLayout {
 
         //Set standard values for fields
         databasePortTextfield.setPlaceholder("3306");
-        databaseNameTextfield.setValue("myInventory");
+
+        try {
+            fillFields();
+        } catch (IOException e) {
+        }
     }
 
     public boolean checkFields()  {
@@ -183,5 +190,30 @@ public class SetupStep1 extends VerticalLayout {
             writeConfig.createConfigFile(UserInputs.toString(this));
             this.getUI().ifPresent(ui -> ui.navigate("Step2"));
         }
+    }
+
+    void fillFields() throws IOException {
+        String[] config = new String[5];
+        String pathToConfigFile = "./config/";
+        File configFile = new File(pathToConfigFile + "SQL.conf");
+        BufferedReader br = new BufferedReader(new FileReader(configFile));
+
+        for (int i = 0; i <= 4; i++) {
+            config[i] = br.readLine();
+        }
+
+        br.close();
+
+        String server = config[0].split("=")[1];
+        String port = config[1].split("=")[1];
+        String name = config[2].split("=")[1];
+        String user = config[3].split("=")[1];
+        String pwd = config[4].split("=")[1];
+
+        databaseURLTextfield.setValue(server);
+        databasePortTextfield.setValue(port);
+        databaseNameTextfield.setValue(name);
+        databaseUserTextfield.setValue(user);
+        databasePwdTextfield.setValue(pwd);
     }
 }
