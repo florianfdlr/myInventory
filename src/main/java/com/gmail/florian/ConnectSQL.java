@@ -9,16 +9,9 @@ import java.util.Properties;
 public class ConnectSQL {
 
     public String[] config = new String[5];
-    public String server;
-    public String port;
-    public String name;
-    public String user;
-    public String pwd;
+    public String server, port, name, user, pwd;
 
-    String DATABASE_USER;
-    String DATABASE_PWD;
-    String DATABASE_DRIVER;
-    String DATABASE_URL;
+    String DATABASE_USER, DATABASE_PWD, DATABASE_DRIVER, DATABASE_URL;
     String timeZone = "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 
 
@@ -109,11 +102,11 @@ public class ConnectSQL {
         return connection;
     }
 
-    boolean userTableExists()  {
+    boolean tableExists(String tablename)  {
         connect();
         try  {
             DatabaseMetaData md = connection.getMetaData();
-            ResultSet rs = md.getTables(null, null, "myInventoryUser", null);
+            ResultSet rs = md.getTables(null, null, tablename, null);
             while(rs.next())  {
                 return true;
             }
@@ -137,8 +130,15 @@ public class ConnectSQL {
                     stmt.executeUpdate("CREATE TABLE myInventoryUser (\n" +
                                             "    ID INT AUTO_INCREMENT PRIMARY KEY,\n" +
                                             "    user TEXT NOT NULL,\n" +
-                                            "    pass TEXT NOT NULL\n" +
+                                            "    pass TEXT NOT NULL,\n" +
+                                            "    role TEXT NOT NULL\n" +
                                             "    );");
+
+                case "RolesTable":
+                    stmt.executeUpdate("CREATE TABLE myInventoryRole (\n" +
+                                            "   rolename    VARCHAR(200)    NOT NULL    PRIMARY KEY,\n" +
+                                            "   description TEXT            NOT NULL\n" +
+                                            "   );");
 
                 default:
                     Notification.show("Unknown task");
@@ -146,10 +146,11 @@ public class ConnectSQL {
 
         } catch (SQLException e)  {
             Notification.show("Something went wrong");
+            e.printStackTrace();
         }
     }
 
-    public void addPerson(String statement)  {
+    public void insertSomething(String statement)  {
         connect();
         Statement stmt = null;
         try {
@@ -159,6 +160,28 @@ public class ConnectSQL {
             e.printStackTrace();
         }
         disconnect();
+    }
+
+    public String getSomething(String selectStatement, String columnLabel)  {
+        connect();
+        Statement stmt = null;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(selectStatement);
+            while (rs.next())  {
+                sb.append(rs.getString(columnLabel));
+                if (!rs.isLast())  {
+                    sb.append(", ");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        disconnect();
+        return sb.toString();
     }
 
     public void disconnect() {
