@@ -60,7 +60,8 @@ public class SetupStep2 extends VerticalLayout {
 
                 Label dialogLabel = new Label("Missing User-Table in Database.");
                 Button dialogBtn = new Button("CREATE", e -> {     connectSQL.createTable("UserTable");
-                                                                        connectSQL.insertSomething("INSERT INTO myInventoryUser (user, pass) VALUES ('" + user + "','" + password + "')");
+                                                                        connectSQL.insertSomething("INSERT INTO myInventoryUser (user, pass, role) " +
+                                                                                "VALUES ('" + user + "','" + password + "', 'admin')");
                                                                         dialog.close();
                                                                     });
 
