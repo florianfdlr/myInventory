@@ -1,5 +1,6 @@
 package com.gmail.florian;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -52,14 +53,14 @@ public class SetupStep2 extends VerticalLayout {
         ConnectSQL connectSQL = new ConnectSQL();
 
         if(validateInputs(user, password, passwordRepeat))  {
-            if(!connectSQL.userTableExists())  {
+            if(!userTableExists())  {
                 Dialog dialog = new Dialog();
                 HorizontalLayout dialogLine1 = new HorizontalLayout();
                 HorizontalLayout dialogLine2 = new HorizontalLayout();
 
                 Label dialogLabel = new Label("Missing User-Table in Database.");
                 Button dialogBtn = new Button("CREATE", e -> {     connectSQL.createTable("UserTable");
-                                                                        connectSQL.addPerson("INSERT INTO myInventoryUser (user, pass) VALUES ('" + user + "','" + password + "')");
+                                                                        connectSQL.insertSomething("INSERT INTO myInventoryUser (user, pass) VALUES ('" + user + "','" + password + "')");
                                                                         dialog.close();
                                                                     });
 
@@ -75,7 +76,7 @@ public class SetupStep2 extends VerticalLayout {
 
                 dialog.open();
             } else  {
-                connectSQL.addPerson("INSERT INTO myInventoryUser (user, pass) VALUES ('" + user + "','" + password + "')");
+                connectSQL.insertSomething("INSERT INTO myInventoryUser (user, pass) VALUES ('" + user + "','" + password + "')");
             }
 
             Notification.show("Added " + user);
@@ -91,7 +92,7 @@ public class SetupStep2 extends VerticalLayout {
     Button submitUser = new Button("+", e -> addPerson(username.getValue(), password.getValue(), passwordRepeat.getValue()));            //Submit Button
     Button backBtn = new Button("<-", e -> this.getUI().ifPresent(ui -> ui.navigate("Step1")));                                  //Back Button
     Span span = new Span("");                                                                                                            //Placeholder
-    Button nextBtn = new Button("->");                                                                                                   //Next Button
+    Button nextBtn = new Button("->", e -> this.getUI().ifPresent(ui -> ui.navigate("Step3")));                                  //Next Button
 
 
     //Progressbar
@@ -100,6 +101,7 @@ public class SetupStep2 extends VerticalLayout {
     void initUIStep2()  {
         VerticalLayout setupBox = new VerticalLayout();
         HorizontalLayout information = new HorizontalLayout();
+        HorizontalLayout information_2 = new HorizontalLayout();
         HorizontalLayout setupLine_1 = new HorizontalLayout();
         HorizontalLayout setupLine_2 = new HorizontalLayout();
 
@@ -108,14 +110,24 @@ public class SetupStep2 extends VerticalLayout {
         setupBox.addClassName("setupBox");
 
         add(setupBox);
-        setupBox.add(information, setupLine_1, setupProgress, setupLine_2);
+        setupBox.add(information, information_2, setupLine_1, setupProgress, setupLine_2);
 
         setupProgress.addClassName("setupProgress");
         setupProgress.setValue(0.2);
 
-        //add information Line
+        //add information Line_1 & Line_2
         Label dbInformationLabel = new Label("Please add minimum 1 user with admin rights.");
         information.add(dbInformationLabel);
+
+        Span existingUsersSpan = new Span();
+        existingUsersSpan.setText("Existing users: ");
+        existingUsersSpan.getStyle().set("font-weight", "bold");
+
+        Span existingUsers = new Span();
+        existingUsers.setText(getExistingUsers());
+        existingUsers.getStyle().set("font-style", "italic");
+
+        information_2.add(existingUsersSpan, existingUsers);
 
         //add textfields and submit button
         setupLine_1.add(username, password, passwordRepeat, submitUser);
@@ -137,9 +149,58 @@ public class SetupStep2 extends VerticalLayout {
         setupLine_2.addClassName("setupLine_1");
         backBtn.setSizeUndefined();
         nextBtn.setSizeUndefined();
-        nextBtn.setEnabled(false);
+    }
 
+    String getExistingUsers()  {
+        ConnectSQL connectSQL = new ConnectSQL();
 
+        if(userTableExists()) {
+            String existingUsers = connectSQL.getSomething("SELECT * FROM myInventoryUser", "user");
+
+            if(existingUsers.length() < 3)  {
+                nextBtn.setEnabled(false);
+                username.setPlaceholder("required");
+                password.setPlaceholder("required");
+                passwordRepeat.setPlaceholder("required");
+                return "-";
+            } else  {
+                nextBtn.setEnabled(true);
+                username.setPlaceholder("optional");
+                password.setPlaceholder("optional");
+                passwordRepeat.setPlaceholder("optional");
+                setupProgress.setValue(0.4);
+
+                if(existingUsers.contains(","))  {
+                    String[] exUsArr = existingUsers.split(",");
+
+                    if(exUsArr.length > 5)  {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(exUsArr[0]).append(",")
+                                .append(exUsArr[1]).append(",")
+                                .append(exUsArr[2]).append(",")
+                                .append(exUsArr[3]).append(",")
+                                .append(exUsArr[4]).append(" and [" + (exUsArr.length-5) + "] more");
+                        return sb.toString();
+                    } else {
+                        return existingUsers;
+                    }
+                } else {
+                    return existingUsers;
+                }
+            }
+        } else  {
+            return "-";
+        }
+    }
+
+    boolean userTableExists()  {
+        ConnectSQL connectSQL = new ConnectSQL();
+
+        if(connectSQL.tableExists("myInventoryUser"))  {
+            return true;
+        } else  {
+            return false;
+        }
     }
 
     void checkFields()  {
