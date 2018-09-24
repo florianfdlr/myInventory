@@ -48,9 +48,9 @@ public class SetupStep3 extends VerticalLayout {
     TextField roleTextfield = new TextField("Add new Role");                                                      //Role name Field
     TextField roleDescriptionTextfield = new TextField("Description", e -> submitRole());                         //Description Field
     Button submitRoleBtn = new Button("Submit");                                                                   //Submit Button
-    Button backBtn = new Button("<-", e -> this.getUI().ifPresent(ui -> ui.navigate("Step1")));           //Back Button
+    Button backBtn = new Button("<-", e -> this.getUI().ifPresent(ui -> ui.navigate("Step2")));           //Back Button
     Span span = new Span("");                                                                                      //Placeholder
-    Button nextBtn = new Button("->", e -> this.getUI().ifPresent(ui -> ui.navigate("Step3")));           //Next Button
+    Button nextBtn = new Button("->", e -> this.getUI().ifPresent(ui -> ui.navigate("Step4")));           //Next Button
 
 
     //Progressbar
